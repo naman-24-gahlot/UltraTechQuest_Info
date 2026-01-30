@@ -78,6 +78,9 @@
         canvas {
             max-height: 350px;
         }
+        table td, table th {
+            border-bottom: 1px solid #ddd;
+        }
         @media (max-width: 968px) {
             .charts-grid {
                 grid-template-columns: 1fr;
@@ -89,245 +92,145 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🏪 UBS Stores Distribution Analysis</h1>
-        <p class="subtitle">Comprehensive Overview of Store Distribution Across Tiers</p>
-        
-        <div class="charts-grid">
-            <div class="chart-container">
-                <div class="chart-title">Stores by Tier</div>
-                <canvas id="storesChart"></canvas>
-            </div>
-            
-            <div class="chart-container">
-                <div class="chart-title">Districts Covered by Tier</div>
-                <canvas id="districtsChart"></canvas>
-            </div>
-            
-            <div class="chart-container">
-                <div class="chart-title">Store Density (Stores per District)</div>
-                <canvas id="densityChart"></canvas>
-            </div>
-            
-            <div class="chart-container">
-                <div class="chart-title">Distribution Comparison</div>
-                <canvas id="comparisonChart"></canvas>
-            </div>
+
+<div class="container">
+    <h1>🏪 UBS Stores Distribution Analysis</h1>
+    <p class="subtitle">Comprehensive Overview of Store Distribution Across Tiers</p>
+
+    <div class="charts-grid">
+        <div class="chart-container">
+            <div class="chart-title">Stores by Tier</div>
+            <canvas id="storesChart"></canvas>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value">5,000</div>
-                <div class="stat-label">Total Stores</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">485</div>
-                <div class="stat-label">Total Districts</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">10.3</div>
-                <div class="stat-label">Avg Store Density</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">11.7</div>
-                <div class="stat-label">Highest Density (Tier 2)</div>
-            </div>
+        <div class="chart-container">
+            <div class="chart-title">Districts Covered by Tier</div>
+            <canvas id="districtsChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">Store Density (Stores per District)</div>
+            <canvas id="densityChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">Distribution Comparison</div>
+            <canvas id="comparisonChart"></canvas>
         </div>
     </div>
 
-    <script>
-        const colors = {
-            tier1: '#FF6384',
-            tier2: '#36A2EB',
-            tier3: '#FFCE56'
-        };
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">5,000</div>
+            <div class="stat-label">Total Stores</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">485</div>
+            <div class="stat-label">Total Districts</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">10.3</div>
+            <div class="stat-label">Avg Store Density</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">11.7</div>
+            <div class="stat-label">Highest Density (Tier 2)</div>
+        </div>
+    </div>
 
-        // Stores by Tier - Doughnut Chart
-        new Chart(document.getElementById('storesChart'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Tier 1', 'Tier 2', 'Tier 3'],
-                datasets: [{
-                    data: [500, 1750, 2750],
-                    backgroundColor: [colors.tier1, colors.tier2, colors.tier3],
-                    borderWidth: 3,
-                    borderColor: '#fff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { font: { size: 12 }, padding: 15 }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const value = context.parsed;
-                                const total = 5000;
-                                const percentage = ((value / total) * 100).toFixed(1);
-                                return context.label + ': ' + value.toLocaleString() + ' (' + percentage + '%)';
-                            }
-                        }
-                    },
-                    datalabels: {
-                        color: '#fff',
-                        font: {
-                            size: 16,
-                            weight: 'bold'
-                        },
-                        formatter: function(value, context) {
-                            const percentage = ((value / 5000) * 100).toFixed(1);
-                            return value.toLocaleString() + '\n(' + percentage + '%)';
-                        }
-                    }
-                }
-            },
-            plugins: [ChartDataLabels]
-        });
+    <!-- CATEGORY MARKET SHARE SECTION -->
+    <div style="margin-top:50px;">
+        <h1>🏗️ UltraTech Category-wise Market Share (Estimated)</h1>
+        <p class="subtitle">Assumption-based estimates derived from competitor benchmarking</p>
 
-        // Districts Chart - Bar Chart
-        new Chart(document.getElementById('districtsChart'), {
-            type: 'bar',
-            data: {
-                labels: ['Tier 1', 'Tier 2', 'Tier 3'],
-                datasets: [{
-                    label: 'Districts',
-                    data: [55, 150, 280],
-                    backgroundColor: [colors.tier1, colors.tier2, colors.tier3],
-                    borderRadius: 8
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { font: { size: 11 } }
-                    },
-                    x: {
-                        ticks: { font: { size: 11 } }
-                    }
-                },
-                plugins: {
-                    legend: { display: false },
-                    datalabels: {
-                        color: '#fff',
-                        anchor: 'center',
-                        align: 'center',
-                        font: {
-                            size: 18,
-                            weight: 'bold'
-                        },
-                        formatter: function(value) {
-                            return value.toLocaleString();
-                        }
-                    }
-                }
-            },
-            plugins: [ChartDataLabels]
-        });
+        <div class="chart-container">
+            <div class="chart-title">Market Share by Product Category (%)</div>
+            <canvas id="categoryShareChart"></canvas>
+        </div>
 
-        // Store Density Chart - Horizontal Bar
-        new Chart(document.getElementById('densityChart'), {
-            type: 'bar',
-            data: {
-                labels: ['Tier 1', 'Tier 2', 'Tier 3', 'Average'],
-                datasets: [{
-                    label: 'Stores per District',
-                    data: [9.1, 11.7, 9.8, 10.3],
-                    backgroundColor: [colors.tier1, colors.tier2, colors.tier3, '#4BC0C0'],
-                    borderRadius: 8
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: true,
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        ticks: { font: { size: 11 } }
-                    },
-                    y: {
-                        ticks: { font: { size: 11 } }
-                    }
-                },
-                plugins: {
-                    legend: { display: false },
-                    datalabels: {
-                        color: '#fff',
-                        anchor: 'center',
-                        align: 'center',
-                        font: {
-                            size: 16,
-                            weight: 'bold'
-                        },
-                        formatter: function(value) {
-                            return value.toFixed(1);
-                        }
-                    }
-                }
-            },
-            plugins: [ChartDataLabels]
-        });
+        <div style="margin-top:30px; overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; font-size:14px;">
+                <thead>
+                    <tr style="background:#667eea; color:#fff;">
+                        <th style="padding:12px; text-align:left;">Category</th>
+                        <th style="padding:12px; text-align:center;">Market Share (%)</th>
+                        <th style="padding:12px; text-align:left;">Competitive Context</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td style="padding:10px;">Grey Cement</td><td style="text-align:center;">22</td><td>Market leader</td></tr>
+                    <tr><td style="padding:10px;">Ready-Mix Concrete</td><td style="text-align:center;">18</td><td>Largest RMC network</td></tr>
+                    <tr><td style="padding:10px;">White Cement</td><td style="text-align:center;">35</td><td>Birla White dominance</td></tr>
+                    <tr><td style="padding:10px;">Waterproofing</td><td style="text-align:center;">8</td><td>Asian Paints / Dr Fixit competition</td></tr>
+                    <tr><td style="padding:10px;">Tile Adhesives</td><td style="text-align:center;">10</td><td>Weber / MYK Laticrete</td></tr>
+                    <tr><td style="padding:10px;">Plasters & Mortars</td><td style="text-align:center;">12</td><td>Cement adjacency benefit</td></tr>
+                    <tr><td style="padding:10px;">Flooring Screeds</td><td style="text-align:center;">6</td><td>MNC dominated segment</td></tr>
+                    <tr><td style="padding:10px;">Repair Products</td><td style="text-align:center;">5</td><td>Technical niche</td></tr>
+                    <tr><td style="padding:10px;">AAC Blocks</td><td style="text-align:center;">7</td><td>Regional market</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-        // Comparison Chart - Grouped Bar
-        new Chart(document.getElementById('comparisonChart'), {
-            type: 'bar',
-            data: {
-                labels: ['Tier 1', 'Tier 2', 'Tier 3'],
-                datasets: [
-                    {
-                        label: 'Stores (÷10)',
-                        data: [50, 175, 275],
-                        backgroundColor: 'rgba(102, 126, 234, 0.8)',
-                        borderRadius: 6
-                    },
-                    {
-                        label: 'Districts',
-                        data: [55, 150, 280],
-                        backgroundColor: 'rgba(255, 159, 64, 0.8)',
-                        borderRadius: 6
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { font: { size: 11 } }
-                    },
-                    x: {
-                        ticks: { font: { size: 11 } }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { font: { size: 11 }, padding: 10 }
-                    },
-                    datalabels: {
-                        color: '#fff',
-                        anchor: 'center',
-                        align: 'center',
-                        font: {
-                            size: 14,
-                            weight: 'bold'
-                        },
-                        formatter: function(value) {
-                            return value;
-                        }
-                    }
-                }
-            },
-            plugins: [ChartDataLabels]
-        });
-    </script>
+<script>
+    const colors = {
+        tier1: '#FF6384',
+        tier2: '#36A2EB',
+        tier3: '#FFCE56'
+    };
+
+    new Chart(storesChart, {
+        type: 'doughnut',
+        data: { labels: ['Tier 1','Tier 2','Tier 3'], datasets:[{ data:[500,1750,2750], backgroundColor:[colors.tier1,colors.tier2,colors.tier3]}]},
+        options:{ plugins:{ datalabels:{ color:'#fff', formatter:v=>v }}},
+        plugins:[ChartDataLabels]
+    });
+
+    new Chart(districtsChart, {
+        type:'bar',
+        data:{ labels:['Tier 1','Tier 2','Tier 3'], datasets:[{ data:[55,150,280], backgroundColor:[colors.tier1,colors.tier2,colors.tier3]}]},
+        plugins:[ChartDataLabels]
+    });
+
+    new Chart(densityChart, {
+        type:'bar',
+        data:{ labels:['Tier 1','Tier 2','Tier 3','Average'], datasets:[{ data:[9.1,11.7,9.8,10.3]}]},
+        options:{ indexAxis:'y' },
+        plugins:[ChartDataLabels]
+    });
+
+    new Chart(comparisonChart, {
+        type:'bar',
+        data:{
+            labels:['Tier 1','Tier 2','Tier 3'],
+            datasets:[
+                { label:'Stores (÷10)', data:[50,175,275], backgroundColor:'#667eea' },
+                { label:'Districts', data:[55,150,280], backgroundColor:'#FF9F40' }
+            ]
+        },
+        plugins:[ChartDataLabels]
+    });
+
+    new Chart(categoryShareChart, {
+        type:'bar',
+        data:{
+            labels:['Grey Cement','RMC','White Cement','Waterproofing','Tile Adhesives','Plasters','Flooring','Repair','AAC'],
+            datasets:[{
+                data:[22,18,35,8,10,12,6,5,7],
+                backgroundColor:['#667eea','#36A2EB','#FF6384','#FFCE56','#4BC0C0','#9966FF','#FF9F40','#C9CBCF','#8DD1E1'],
+                borderRadius:8
+            }]
+        },
+        options:{
+            plugins:{
+                legend:{ display:false },
+                datalabels:{ color:'#fff', formatter:v=>v+'%' }
+            }
+        },
+        plugins:[ChartDataLabels]
+    });
+</script>
+
 </body>
 </html>

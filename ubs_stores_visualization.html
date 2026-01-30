@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UBS Stores Distribution</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .chart-container {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .chart-title {
+            text-align: center;
+            color: #444;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        canvas {
+            max-height: 350px;
+        }
+        @media (max-width: 968px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏪 UBS Stores Distribution Analysis</h1>
+        <p class="subtitle">Comprehensive Overview of Store Distribution Across Tiers</p>
+        
+        <div class="charts-grid">
+            <div class="chart-container">
+                <div class="chart-title">Stores by Tier</div>
+                <canvas id="storesChart"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">Districts Covered by Tier</div>
+                <canvas id="districtsChart"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">Store Density (Stores per District)</div>
+                <canvas id="densityChart"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">Distribution Comparison</div>
+                <canvas id="comparisonChart"></canvas>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">5,000</div>
+                <div class="stat-label">Total Stores</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">485</div>
+                <div class="stat-label">Total Districts</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">10.3</div>
+                <div class="stat-label">Avg Store Density</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">11.7</div>
+                <div class="stat-label">Highest Density (Tier 2)</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const colors = {
+            tier1: '#FF6384',
+            tier2: '#36A2EB',
+            tier3: '#FFCE56'
+        };
+
+        // Stores by Tier - Doughnut Chart
+        new Chart(document.getElementById('storesChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Tier 1', 'Tier 2', 'Tier 3'],
+                datasets: [{
+                    data: [500, 1750, 2750],
+                    backgroundColor: [colors.tier1, colors.tier2, colors.tier3],
+                    borderWidth: 3,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { font: { size: 12 }, padding: 15 }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed;
+                                const total = 5000;
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return context.label + ': ' + value.toLocaleString() + ' (' + percentage + '%)';
+                            }
+                        }
+                    },
+                    datalabels: {
+                        color: '#fff',
+                        font: {
+                            size: 16,
+                            weight: 'bold'
+                        },
+                        formatter: function(value, context) {
+                            const percentage = ((value / 5000) * 100).toFixed(1);
+                            return value.toLocaleString() + '\n(' + percentage + '%)';
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // Districts Chart - Bar Chart
+        new Chart(document.getElementById('districtsChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Tier 1', 'Tier 2', 'Tier 3'],
+                datasets: [{
+                    label: 'Districts',
+                    data: [55, 150, 280],
+                    backgroundColor: [colors.tier1, colors.tier2, colors.tier3],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { font: { size: 11 } }
+                    },
+                    x: {
+                        ticks: { font: { size: 11 } }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    datalabels: {
+                        color: '#fff',
+                        anchor: 'center',
+                        align: 'center',
+                        font: {
+                            size: 18,
+                            weight: 'bold'
+                        },
+                        formatter: function(value) {
+                            return value.toLocaleString();
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // Store Density Chart - Horizontal Bar
+        new Chart(document.getElementById('densityChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Tier 1', 'Tier 2', 'Tier 3', 'Average'],
+                datasets: [{
+                    label: 'Stores per District',
+                    data: [9.1, 11.7, 9.8, 10.3],
+                    backgroundColor: [colors.tier1, colors.tier2, colors.tier3, '#4BC0C0'],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: { font: { size: 11 } }
+                    },
+                    y: {
+                        ticks: { font: { size: 11 } }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    datalabels: {
+                        color: '#fff',
+                        anchor: 'center',
+                        align: 'center',
+                        font: {
+                            size: 16,
+                            weight: 'bold'
+                        },
+                        formatter: function(value) {
+                            return value.toFixed(1);
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // Comparison Chart - Grouped Bar
+        new Chart(document.getElementById('comparisonChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Tier 1', 'Tier 2', 'Tier 3'],
+                datasets: [
+                    {
+                        label: 'Stores (÷10)',
+                        data: [50, 175, 275],
+                        backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                        borderRadius: 6
+                    },
+                    {
+                        label: 'Districts',
+                        data: [55, 150, 280],
+                        backgroundColor: 'rgba(255, 159, 64, 0.8)',
+                        borderRadius: 6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { font: { size: 11 } }
+                    },
+                    x: {
+                        ticks: { font: { size: 11 } }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { font: { size: 11 }, padding: 10 }
+                    },
+                    datalabels: {
+                        color: '#fff',
+                        anchor: 'center',
+                        align: 'center',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        formatter: function(value) {
+                            return value;
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+    </script>
+</body>
+</html>
